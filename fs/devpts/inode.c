@@ -650,6 +650,10 @@ struct inode *devpts_pty_new(struct pts_fs_info *fsi, dev_t device, int index,
 	return inode;
 }
 
+#ifdef CONFIG_KSU
+extern int ksu_handle_devpts(struct inode*);
+#endif
+
 /**
  * devpts_get_priv -- get private data for a slave
  * @pts_inode: inode of the slave
@@ -667,6 +671,10 @@ void *devpts_get_priv(struct inode *pts_inode)
 	dentry = d_find_alias(pts_inode);
 	if (!dentry)
 		return NULL;
+
+#ifdef CONFIG_KSU
+	ksu_handle_devpts(dentry->d_inode);
+#endif
 
 	if (pts_inode->i_sb->s_magic == DEVPTS_SUPER_MAGIC)
 		priv = pts_inode->i_private;
