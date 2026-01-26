@@ -33,8 +33,21 @@
 	};
 
 	chosen {
-		stdout-path = "serial0";
-		bootargs = "rcupdate.rcu_expedited=1";
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		stdout-path = "framebuffer";
+		bootargs = "rcupdate.rcu_expedited=1 earlycon=simplefb,0x9d400000,1200,1920 console=simplefb keep_bootcon";
+		framebuffer: framebuffer@9d400000 {
+			compatible = "simple-framebuffer";
+			reg = <0x0 0x9d400000 0x0 0x23ff000>;
+			width = <1200>;
+			height = <1920>;
+			stride = <(1200 * 4)>;
+			format = "a8r8g8b8";
+			status = "okay";
+		};
 	};
 
 	psci {
@@ -388,7 +401,8 @@
 
 		cont_splash_mem: splash_region@9d400000 {
 			reg = <0x0 0x9d400000 0x0 0x23ff000>;
-			label = "cont_splash_mem";
+			//label = "cont_splash_mem";
+			no-map;
 		};
 
 		dfps_data_mem: dfps_data_mem@0x9f7ff000 {
